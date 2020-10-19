@@ -7,8 +7,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        JFrame frame = new Encryptor();
-        frame.setSize(400, 300);
+        JFrame frame = new Menu();
+        frame.setSize(400, 200);
         centreWindow(frame);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Encryptor");

@@ -5,12 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-public class Encryptor extends JFrame {
+public class Decryptor extends JFrame {
 
     JPanel panel = new JPanel();
     JButton open = new JButton("Open file");
-    JButton loadKey = new JButton("Add RSA public");
+    JButton loadKey = new JButton("Add RSA private");
     JButton crypto = new JButton("Run");
     JButton back = new JButton("Back");
     JTextField filename = new JTextField();
@@ -21,7 +23,7 @@ public class Encryptor extends JFrame {
     RsaGenerator rsaGenerator = new RsaGenerator();
     AesGenerator aesGenerator = new AesGenerator();
 
-    public Encryptor() {
+    public Decryptor() {
 
         Container container = getContentPane();
 
@@ -29,7 +31,7 @@ public class Encryptor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
-                int rVal = chooser.showOpenDialog(Encryptor.this);
+                int rVal = chooser.showOpenDialog(Decryptor.this);
                 if (rVal == JFileChooser.APPROVE_OPTION) {
                     filename.setText(chooser.getSelectedFile().getAbsolutePath());
                     fileType = getExtension(chooser.getSelectedFile().getName());
@@ -43,7 +45,7 @@ public class Encryptor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
-                int rVal = chooser.showOpenDialog(Encryptor.this);
+                int rVal = chooser.showOpenDialog(Decryptor.this);
                 if (rVal == JFileChooser.APPROVE_OPTION) {
                     rsaKey.setText(chooser.getSelectedFile().getAbsolutePath());
                     rsaKeyPath = rsaKey.getText();
@@ -137,16 +139,31 @@ public class Encryptor extends JFrame {
         boolean done = true;
 
         try {
-            CryptoUtils.encrypt(aes, inputFile, new File("encrypted." + type), rsa);
-            msg = "Yr file was encrypted successfully";
+            CryptoUtils.decrypt(inputFile, new File("decrypted." + type), rsa);
+            msg = "Yr file was decrypted successfully";
         } catch (CryptoException ex) {
-            JOptionPane.showMessageDialog(Encryptor.this,
-                    "Error encrypting/decrypting file", "Error", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(Decryptor.this,
+                    "Error decrypting file", "Error", JOptionPane.INFORMATION_MESSAGE);
             done = false;
         }
         if (done) {
-            JOptionPane.showMessageDialog(Encryptor.this,
+            JOptionPane.showMessageDialog(Decryptor.this,
                     msg, title, JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    private String openKeyFile(String file) {
+        String key = "";
+        try {
+            byte[] encoded = Files.readAllBytes(Paths.get(file));
+            key = new String(encoded);
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(Decryptor.this,
+                    "Could not load key",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return key;
     }
 }
