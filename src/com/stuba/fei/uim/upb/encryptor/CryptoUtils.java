@@ -116,6 +116,7 @@ public class CryptoUtils {
                                 "Integrity of file was corrupted",
                                 "Mac comparison",
                                 JOptionPane.WARNING_MESSAGE);
+                        throw new CryptoException();
                     }
                 }
                 inputStream.close();
