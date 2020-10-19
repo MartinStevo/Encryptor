@@ -93,7 +93,6 @@ public class CryptoUtils {
                     inputStream.read(ivEnc);
                     inputStream.read(macEnc);
                     key = rsaGenerator.decrypt(keyEnc, rsaPath);
-                    outputKey(macEnc);
 
                     Key secretKey = new SecretKeySpec(Base64.getDecoder().decode(key), ALGORITHM);
                     Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -125,25 +124,6 @@ public class CryptoUtils {
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IOException | IllegalArgumentException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException
                 ex) {
             throw new CryptoException("Error decrypting file", ex);
-        }
-    }
-
-    protected static void outputKey(byte[] mac) {
-
-        File output = new File("mac");
-
-        try (FileWriter writer = new FileWriter(output)) {
-            writer.write(Base64.getEncoder().encodeToString(mac));
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(new JFrame(),
-                    "mac!",
-                    "Error",
-                    JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(new JFrame(),
-                    "mac",
-                    "Error",
-                    JOptionPane.WARNING_MESSAGE);
         }
     }
 }
